@@ -1,10 +1,10 @@
 <template>
-    <div>ccc</div>
+    <div>与租户的合同</div>
 </template>
 
 <script>
 export default {
-  name: 'Home'
+  name: 'WithTenant'
 }
 </script>
 

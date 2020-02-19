@@ -1,10 +1,10 @@
 <template>
-    <div>ccc</div>
+    <div>支付房主的租金</div>
 </template>
 
 <script>
 export default {
-  name: 'Home'
+  name: 'RentOut'
 }
 </script>
 
