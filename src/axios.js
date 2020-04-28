@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-axios.defaults.baseURL = 'https://localhost:5001'
+axios.defaults.baseURL = process.env.VUE_APP_BASE_URL
 
 axios.defaults.withCredentials = true
 

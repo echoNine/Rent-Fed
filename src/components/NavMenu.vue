@@ -13,7 +13,7 @@
                   :key="navMenu.entity.id" :data="navMenu" :index="navMenu.entity.name">
         <template slot="title">
           <i :class="navMenu.entity.icon"></i>
-          <span> {{navMenu.entity.alias}}</span>
+          <span v-show="opened"> {{navMenu.entity.alias}}</span>
         </template>
         <NavMenu :navMenus="navMenu.children"></NavMenu>
       </el-submenu>
@@ -24,7 +24,15 @@
 <script>
 export default {
   name: 'NavMenu',
-  props: ['navMenus'],
+  props: {
+    navMenus: {
+      type: Array
+    },
+    opened: {
+      type: Boolean,
+      default: true
+    }
+  },
   data () {
     return {}
   },
