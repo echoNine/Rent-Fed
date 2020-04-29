@@ -45,7 +45,7 @@
       </el-table-column>
       <el-table-column
         label="姓名"
-        prop="username">
+        prop="name">
       </el-table-column>
       <el-table-column
         label="操作"
@@ -104,11 +104,12 @@ export default {
       this.getTenantList()
     },
     getTenantList: function () {
-      this.$ajax.get('/tenant/tenantList', {
+      this.$ajax.get('/user/userList', {
         params: {
           id: Number(this.queryData.id.replace(/(^T_*)/g, '')),
           pageNum: this.queryData.pageNum,
-          pageSize: this.queryData.pageSize
+          pageSize: this.queryData.pageSize,
+          type: ''
         }
       })
         .then(res => {

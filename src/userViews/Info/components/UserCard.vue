@@ -50,44 +50,38 @@ export default {
     }
   },
   methods: {
+    userAvatarUrl (img) {
+      if (img) {
+        return process.env.VUE_APP_RESOURCE_URL + img
+      }
+
+      return require('@/assets/imgs/defaultHead.png')
+    },
     getUrl (img) {
       return process.env.VUE_APP_RESOURCE_URL + img
     }
   },
   created: function () {
-    let token = sessionStorage.getItem('token')
-    this.$ajax.get('/user/userList', {
+    let userInfo = this.$store.getters.mustGetUser
+    this.infoData.avatar = this.userAvatarUrl(userInfo.avatar)
+    this.infoData.name = userInfo.name
+    this.infoData.typeName = userInfo.typeName
+    this.infoData.sex = userInfo.sex
+    this.infoData.phone = userInfo.phone
+    this.infoData.email = userInfo.email
+    this.infoData.native = userInfo.native
+
+    this.$ajax.get('/user/selfDescTags', {
       params: {
         email: sessionStorage.getItem('email')
       }
     })
       .then(res => {
-        if (token != null) { // 已登录 -> 判断是不是新注册的  显示登录状态
-          if (res.data.msg.table[0].avatar) {
-            this.infoData.avatar = this.getUrl(res.data.msg.table[0].avatar)
-          } else {
-            this.infoData.avatar = require('@/assets/imgs/defaultHead.png')
-          }
-
-          this.infoData.name = res.data.msg.table[0].name
-          this.infoData.typeName = res.data.msg.table[0].typeName
-          this.infoData.sex = res.data.msg.table[0].sex
-          this.infoData.phone = res.data.msg.table[0].phone
-          this.infoData.email = res.data.msg.table[0].email
-          this.infoData.native = res.data.msg.table[0].native
-          this.$ajax.get('/user/selfDescTags', {
-            params: {
-              email: sessionStorage.getItem('email')
-            }
-          })
-            .then(res => {
-              let tags = []
-              res.data.msg.table.forEach(function (item) {
-                tags.push(item.tag)
-              })
-              this.infoData.selfDescTags = tags
-            })
-        }
+        let tags = []
+        res.data.msg.table.forEach(function (item) {
+          tags.push(item.tag)
+        })
+        this.infoData.selfDescTags = tags
       })
   }
 }

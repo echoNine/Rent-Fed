@@ -3,7 +3,7 @@
     <el-header>
       <el-row class="headerOwner">
         <el-col :span="10">
-          <img src="../assets/imgs/logo2.png" class="logo">
+          <logo></logo>
         </el-col>
         <el-col :span="6">
           <ul>
@@ -13,15 +13,9 @@
           </ul>
         </el-col>
         <el-col :span="4" style="line-height: 60px">
-          <el-button type="warning" @click="dialogFormVisible = true">立即委托</el-button>
-          <el-dialog title="在线委托" :visible.sync="dialogFormVisible" width="40%">
-            <el-form :model="entrustForm" :rules="rules" ref="entrustForm">
-              <el-form-item label="业主姓名：" :label-width="formLabelWidth" prop="name" required>
-                <el-input v-model="entrustForm.name" clearable></el-input>
-              </el-form-item>
-              <el-form-item label="联系电话：" :label-width="formLabelWidth" prop="phone" required>
-                <el-input v-model="entrustForm.phone" clearable></el-input>
-              </el-form-item>
+          <el-button type="warning" @click="dialogFormVisible = true">立即申请</el-button>
+          <el-dialog title="在线申请" :visible.sync="dialogFormVisible" width="40%">
+            <el-form :model="entrustForm" ref="entrustForm">
               <el-form-item label="房屋城市：" :label-width="formLabelWidth" prop="city" required>
                 <el-select v-model="entrustForm.city" clearable>
                   <el-option v-for="(item, index) in cityList" :key="index" :label="item" :value="item"></el-option>
@@ -121,7 +115,12 @@
 </template>
 
 <script>
+import Logo from './Logo'
+
 export default {
+  components: {
+    Logo
+  },
   name: 'ToBeOwner',
   inject: ['reload'],
   data () {
@@ -134,7 +133,6 @@ export default {
       formLabelWidth: '100px',
       cityList: ['北京', '上海', '深圳', '杭州', '南京', '广州', '武汉', '成都', '天津'],
       entrustForm: {
-        name: '',
         phone: '',
         city: '',
         community: ''
@@ -142,27 +140,25 @@ export default {
     }
   },
   created () {
-    let token = sessionStorage.getItem('token')
-    this.$ajax.get('/user/userList', {
-      params: {
-        email: sessionStorage.getItem('email')
-      }
-    })
-      .then(res => {
-        if (token != null) {
-          this.logined = true
-          this.userName = res.data.msg.table[0].name
-          this.avatarImg = this.getUrl(res.data.msg.table[0].avatar)
-        }
-      })
+    let userInfo = this.$store.getters.mustGetUser
+    this.logined = true
+    this.userName = userInfo.name
+    this.avatarImg = this.getUrl(userInfo.avatar)
   },
   methods: {
+    userAvatarUrl (img) {
+      if (img) {
+        return process.env.VUE_APP_RESOURCE_URL + img
+      }
+
+      return require('@/assets/imgs/defaultHead.png')
+    },
     getUrl (img) {
       return process.env.VUE_APP_RESOURCE_URL + img
     },
 
     toIndex () {
-      this.$router.push('/Index')
+      this.$router.push('/')
     },
 
     toHouseIndex () {
@@ -178,9 +174,7 @@ export default {
         if (valid) {
           this.$loading({ text: '正在提交, 请稍等...' })
           this.dialogFormVisible = false
-          this.$ajax.post('/userHouse/entrustHouse', {
-            name: this.entrustForm.name,
-            phone: this.entrustForm.phone,
+          this.$ajax.post('/user/toBeOwner', {
             city: this.entrustForm.city,
             community: this.entrustForm.community
           })
@@ -212,7 +206,7 @@ export default {
       } else {
         sessionStorage.removeItem('token')
         sessionStorage.removeItem('email')
-        this.$router.push('/Index')
+        this.$router.push('/')
         this.reload()
       }
     }
@@ -252,12 +246,6 @@ export default {
     background-color: white;
     width: 100%;
     box-shadow: 0 2px 8px 0 rgba(0, 0, 0, .08);
-  }
-
-  .logo {
-    width: 160px;
-    margin-top: 8px;
-    margin-left: 18%;
   }
 
   .headerOwner ul {

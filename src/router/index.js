@@ -62,6 +62,14 @@ export const routers = {
       },
       children: [
         {
+          path: 'ToBeOwner',
+          name: 'ToBeOwner',
+          meta: {
+            title: '房主申请'
+          },
+          component: () => import('../adminViews/User/ToBeOwner.vue')
+        },
+        {
           path: 'Owner',
           name: 'Owner',
           meta: {
@@ -163,7 +171,7 @@ export const routers = {
       component: () => import('../userViews/UserLogin.vue')
     },
     {
-      path: '/Index',
+      path: '/',
       name: 'Index',
       component: () => import('../userViews/Index.vue')
     },

@@ -2,7 +2,7 @@
   <div class="header">
     <el-row>
       <el-col :span="6">
-        <img src="../../../assets/imgs/logo2.png" class="logo">
+        <logo></logo>
       </el-col>
       <el-col :span="14">
         <ul>
@@ -18,7 +18,12 @@
 </template>
 
 <script>
+import Logo from '../../Logo'
+
 export default {
+  components: {
+    Logo
+  },
   name: 'InfoHeader',
   data () {
     return {
@@ -28,7 +33,7 @@ export default {
   },
   methods: {
     toIndex () {
-      this.$router.push('/Index')
+      this.$router.push('/')
     },
 
     showSetting () {

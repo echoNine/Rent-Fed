@@ -53,7 +53,7 @@
       </el-table-column>
       <el-table-column
         label="姓名"
-        prop="username">
+        prop="name">
       </el-table-column>
       <el-table-column
         label="操作"
@@ -86,7 +86,8 @@ export default {
         rentType: ''
       }],
       dialogTableVisible: false,
-      tableData: [{
+      /**
+       {
         id: '',
         email: '',
         username: '',
@@ -96,7 +97,9 @@ export default {
         native: '',
         job: '',
         createdAt: ''
-      }],
+      }
+       */
+      tableData: [],
       queryData: {
         id: '',
         pageNum: 1,
@@ -123,7 +126,7 @@ export default {
           id: Number(this.queryData.id.replace(/(^O_*)/g, '')),
           pageNum: this.queryData.pageNum,
           pageSize: this.queryData.pageSize,
-          type: 2
+          type: 'owner'
         }
       })
         .then(res => {

@@ -212,6 +212,7 @@ export default {
               onClose: () => {
                 this.$loading().close()
                 this.$router.push('/Info/PersonalCenter')
+                window.location.reload()
               }
             })
           }

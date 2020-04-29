@@ -3,7 +3,7 @@
     <el-header>
       <el-row class="headerIndex">
         <el-col :span="10">
-          <img src="../assets/imgs/logo2.png" class="logo">
+          <logo></logo>
         </el-col>
         <el-col :span="10">
           <ul>
@@ -99,7 +99,12 @@
 </template>
 
 <script>
+import Logo from './Logo'
+
 export default {
+  components: {
+    Logo
+  },
   name: 'RentDetail',
   inject: ['reload'],
   data () {
@@ -107,7 +112,8 @@ export default {
       logined: false,
       avatarImg: '',
       userName: '',
-      cardData: [{
+      /**
+       {
         cover: '',
         community: '',
         orientation: '',
@@ -116,7 +122,9 @@ export default {
         layout: '',
         price: '',
         address: ''
-      }],
+      }
+       */
+      cardData: [],
       type: ['不限', '合租', '整租'],
       payMethod: ['不限', '月付价', '季付价', '年付价'],
       price: [
@@ -233,27 +241,21 @@ export default {
     }
   },
   created () {
-    let token = sessionStorage.getItem('token')
-    this.$ajax.get('/user/userList', {
-      params: {
-        email: sessionStorage.getItem('email')
+    let userInfo = this.$store.getters.userInfo
+    if (userInfo) {
+      this.avatarImg = this.userAvatarUrl(userInfo.avatar)
+      this.userName = userInfo.name
+      this.logined = true
+
+      let type = this.$route.query.rentType
+      let inputInfo = this.$route.query.inputInfo
+      if (type && inputInfo) {
+        this.queryData.rentType = type === '不限' ? '' : type
+        this.queryData.inputInfo = inputInfo
+        this.active1 = this.type.indexOf(type)
       }
-    })
-      .then(res => {
-        if (token != null) {
-          this.logined = true
-          this.userName = res.data.msg.table[0].name
-          this.avatarImg = this.getUrl(res.data.msg.table[0].avatar)
-          let type = this.$route.query.rentType
-          let inputInfo = this.$route.query.inputInfo
-          if (type && inputInfo) {
-            this.queryData.rentType = type === '不限' ? '' : type
-            this.queryData.inputInfo = inputInfo
-            this.active1 = this.type.indexOf(type)
-          }
-          this.search()
-        }
-      })
+      this.search()
+    }
   },
   methods: {
     pageChange (val) {
@@ -291,6 +293,13 @@ export default {
           this.queryData.inputInfo = ''
         })
     },
+    userAvatarUrl (img) {
+      if (img) {
+        return process.env.VUE_APP_RESOURCE_URL + img
+      }
+
+      return require('@/assets/imgs/defaultHead.png')
+    },
     getUrl (img) {
       return process.env.VUE_APP_RESOURCE_URL + img
     },
@@ -317,7 +326,7 @@ export default {
       this.search()
     },
     toIndex () {
-      this.$router.push('/Index')
+      this.$router.push('/')
     },
     toHouseIndex () {
       this.$router.push('/HouseIndex')
@@ -331,7 +340,7 @@ export default {
       } else {
         sessionStorage.removeItem('token')
         sessionStorage.removeItem('email')
-        this.$router.push('/Index')
+        this.$router.push('/')
         this.reload()
       }
     },

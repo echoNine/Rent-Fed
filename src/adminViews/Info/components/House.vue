@@ -38,7 +38,8 @@
 export default {
   data: function () {
     return {
-      cardData: [{
+      /**
+       {
         cover: '',
         community: '',
         orientation: '',
@@ -46,7 +47,9 @@ export default {
         floor: '',
         price: '',
         address: ''
-      }]
+      }
+       */
+      cardData: []
     }
   },
 

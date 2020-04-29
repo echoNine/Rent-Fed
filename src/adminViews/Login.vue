@@ -1,7 +1,7 @@
 <template>
   <div class="login-container">
     <el-dialog title="完善个人信息" style="text-align: left" :visible.sync="dialogFormVisible">
-      <el-form :model="infoForm" :rules="rules" ref="infoForm" label-width="95px">
+      <el-form :model="infoForm" ref="infoForm" label-width="95px">
         <el-form-item label="姓名" prop="name" required>
           <el-input v-model="infoForm.name" clearable></el-input>
         </el-form-item>
@@ -30,8 +30,7 @@
             :action="uploadUrl"
             :show-file-list="false"
             :on-success="getFilePath"
-            :on-remove="handleRemove"
-            :on-preview="handlePictureCardPreview">
+            :on-remove="handleRemove">
             <img v-if="infoForm.avatarURL" :src="infoForm.avatarURL" class="avatar">
             <span v-if="infoForm.avatarURL" class="el-upload-action" @click.stop="handleRemove()">
                     <i class="el-icon-delete"></i>

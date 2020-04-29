@@ -113,33 +113,39 @@ export default {
   data () {
     return {
       uploadUrl: process.env.VUE_APP_BASE_URL + '/file/upload',
-      likeData: {
-        houseId: '',
-        community: '',
-        floor: '',
-        area: '',
-        rentType: '',
-        price: '',
-        status: '',
-        createdAt: '',
-        addCount: ''
-      },
-      orderData: {
-        id: '',
-        houseId: '',
-        adminName: '',
-        phone: '',
-        orderTime: '',
-        status: ''
-      },
-      rentedData: {
-        id: '',
-        houseId: '',
-        createdAt: '',
-        endAt: '',
-        contractStatus: '',
-        isDisabled: false
-      },
+      likeData: [
+        {
+          houseId: '',
+          community: '',
+          floor: '',
+          area: '',
+          rentType: '',
+          price: '',
+          status: '',
+          createdAt: '',
+          addCount: ''
+        }
+      ],
+      orderData: [
+        {
+          id: '',
+          houseId: '',
+          adminName: '',
+          phone: '',
+          orderTime: '',
+          status: ''
+        }
+      ],
+      rentedData: [
+        {
+          id: '',
+          houseId: '',
+          createdAt: '',
+          endAt: '',
+          contractStatus: '',
+          isDisabled: false
+        }
+      ],
       isCollect: true,
       isOrder: false,
       isContract: false,

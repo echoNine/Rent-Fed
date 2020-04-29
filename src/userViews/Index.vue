@@ -3,7 +3,7 @@
     <el-header>
       <el-row class="header">
         <el-col :span="10">
-          <img src="../assets/imgs/logo1.png" class="logo">
+          <logo></logo>
         </el-col>
         <el-col :span="10">
           <ul>
@@ -32,7 +32,7 @@
     </el-header>
     <el-main style="margin-top: -64px;">
       <el-dialog title="完善个人信息" :visible.sync="dialogFormVisible">
-        <el-form :model="infoForm" :rules="rules" ref="infoForm" label-width="95px">
+        <el-form :model="infoForm" ref="infoForm" label-width="95px">
           <el-form-item label="姓名" prop="name" required>
             <el-input v-model="infoForm.name" clearable></el-input>
           </el-form-item>
@@ -58,8 +58,7 @@
               :action="uploadUrl"
               :show-file-list="false"
               :on-success="getFilePath"
-              :on-remove="handleRemove"
-              :on-preview="handlePictureCardPreview">
+              :on-remove="handleRemove">
               <img v-if="infoForm.avatarURL" :src="infoForm.avatarURL" class="avatar">
               <span v-if="infoForm.avatarURL" class="el-upload-action" @click.stop="handleRemove()">
                     <i class="el-icon-delete"></i>
@@ -73,7 +72,7 @@
         </div>
       </el-dialog>
       <el-carousel :interval="5000" arrow="always">
-        <el-carousel-item v-for="item in indexBgList" :key="item">
+        <el-carousel-item v-for="(item, index) in indexBgList" :key="index">
           <img :src="item.url" class="bgImg"/>
         </el-carousel-item>
       </el-carousel>
@@ -91,7 +90,6 @@
               v-model="inputInfo"
               :fetch-suggestions="querySearch"
               placeholder="请输入内容"
-              @select="handleSelect"
             ></el-autocomplete>
           </el-col>
           <el-col :span="6">
@@ -262,8 +260,12 @@
 </template>
 
 <script>
+import Logo from './Logo'
 let nativeList = require('@/assets/js/city.json')
 export default {
+  components: {
+    Logo
+  },
   name: 'Index',
   inject: ['reload'],
   data () {
@@ -293,13 +295,21 @@ export default {
         avatarURL: ''
       },
       userName: '',
-      avatarImg: ''
+      avatarImg: '',
+      value: 5
     }
   },
   methods: {
     getFilePath (res, file) {
       this.infoForm.avatarURL = URL.createObjectURL(file.raw)
       this.infoForm.avatar = res.msg[0]
+    },
+    userAvatarUrl (img) {
+      if (img) {
+        return process.env.VUE_APP_RESOURCE_URL + img
+      }
+
+      return require('@/assets/imgs/defaultHead.png')
     },
     getUrl (img) {
       return process.env.VUE_APP_RESOURCE_URL + img
@@ -342,7 +352,7 @@ export default {
       this.$router.push({ path: '/UserLogin', query: { isLogin: false } })
     },
     toIndex () {
-      this.$router.push('/Index')
+      this.$router.push('/')
     },
     toHouseIndex () {
       this.$router.push('/HouseIndex')
@@ -354,9 +364,10 @@ export default {
       if (command === 'center') {
         this.$router.push('/TenantCenter')
       } else {
-        sessionStorage.removeItem('token')
-        sessionStorage.removeItem('email')
-        this.$router.push('/Index')
+        this.$store.dispatch('clearUser')
+        if (this.$route.path !== '/') {
+          this.$router.push('/')
+        }
         this.reload()
       }
     },
@@ -406,24 +417,15 @@ export default {
     }
   },
   created: function () {
-    let token = sessionStorage.getItem('token')
-    this.$ajax.get('/user/userList', {
-      params: {
-        email: sessionStorage.getItem('email')
-      }
-    })
-      .then(res => {
-        if (token != null) { // 已登录 -> 判断是不是新注册的  显示登录状态
-          this.logined = true
-          this.userName = res.data.msg.table[0].name
-          this.avatarImg = this.getUrl(res.data.msg.table[0].avatar)
-          if (res.data.msg.table[0].name == null) {
-            this.dialogFormVisible = true
-          } else {
-            this.dialogFormVisible = false
-          }
-        }
-      })
+    let userInfo = this.$store.getters.userInfo
+    if (userInfo) {
+      this.avatarImg = this.userAvatarUrl(userInfo.avatar)
+      this.userName = userInfo.name
+      console.log(userInfo)
+      this.logined = true
+
+      this.dialogFormVisible = this.userName == null
+    }
   },
   mounted () {
     this.loadAll().then(res => {

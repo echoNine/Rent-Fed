@@ -72,7 +72,7 @@ export default {
       immediate: true
     }
   },
-  created () {
+  mounted () {
     this.activeIndex = this.$route.path
     let menuData = routers.routes.map(routes => {
       if (routes.meta === undefined) return
@@ -102,16 +102,19 @@ export default {
       return layer
     }).filter(item => item)
     this.menuData = menuData
-    let adminToken = sessionStorage.getItem('adminToken')
-    this.$ajax.get('/admin/adminList', {
-      params: {
-        adminEmail: sessionStorage.getItem('adminEmail')
-      }
-    })
+    this.$ajax.get('/admin/adminList')
       .then(res => {
-        if (adminToken != null) {
+        console.log(res)
+        if (res.data.msg.table.length > 0) {
           this.userName = res.data.msg.table[0].username
-          this.avatarImg = this.getUrl(res.data.msg.table[0].avatar)
+          if (res.data.msg.table[0].avatar) {
+            this.avatarImg = this.getUrl(res.data.msg.table[0].avatar)
+          } else {
+            this.avatarImg = require('@/assets/imgs/defaultHead.png')
+          }
+        } else {
+          this.$message.error('登陆过期, 请重新登陆')
+          this.$router.push('/Login')
         }
       })
   },
@@ -135,7 +138,7 @@ export default {
       } else {
         sessionStorage.removeItem('token')
         sessionStorage.removeItem('email')
-        this.$router.push('/Index')
+        this.$router.push('/')
         this.reload()
       }
     }

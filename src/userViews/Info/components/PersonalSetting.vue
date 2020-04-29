@@ -39,7 +39,8 @@
                 @blur="handleInputConfirm"
               >
               </el-input>
-              <el-button v-else class="button-new-tag" plain size="small" type="warning" @click="showInput">+</el-button>
+              <el-button v-else class="button-new-tag" plain size="small" type="warning" @click="showInput">+
+              </el-button>
             </el-form-item>
             <el-form-item>
               <el-button type="warning" @click="updateInfo">更新基本信息</el-button>
@@ -54,7 +55,8 @@
                 :action="uploadUrl"
                 :show-file-list="false"
                 :on-success="getFilePath">
-                <el-button size="small" icon="el-icon-upload2" type="warning" plain style="margin-left: 105px">更换头像</el-button>
+                <el-button size="small" icon="el-icon-upload2" type="warning" plain style="margin-left: 105px">更换头像
+                </el-button>
               </el-upload>
             </el-form-item>
           </el-col>
@@ -77,7 +79,8 @@
           </el-col>
         </el-row>
       </el-form>
-      <el-form v-else :model="updatePwdForm" status-icon :rules="rules" ref="updatePwdForm" label-width="100px" style="width: 60%; margin-top: 5%">
+      <el-form v-else :model="updatePwdForm" status-icon :rules="rules" ref="updatePwdForm" label-width="100px"
+               style="width: 60%; margin-top: 5%">
         <el-form-item label="原密码">
           <el-input type="password" v-model="updatePwdForm.oldPwd" autocomplete="off"></el-input>
         </el-form-item>
@@ -129,34 +132,17 @@ export default {
     }
   },
   created: function () {
-    let token = sessionStorage.getItem('token')
-    this.$ajax.get('/user/userList', {
-      params: {
-        email: sessionStorage.getItem('email')
-      }
-    })
-      .then(res => {
-        if (token != null) {
-          if (res.data.msg.table[0].avatar) {
-            this.infoData.avatarURL = this.getUrl(res.data.msg.table[0].avatar)
-            this.infoData.avatar = res.data.msg.table[0].avatar
-          } else {
-            this.infoData.avatarURL = require('@/assets/imgs/defaultHead.png')
-          }
-          this.$ajax.get('/user/selfDescTags', {
-            params: {
-              email: sessionStorage.getItem('email')
-            }
-          })
-            .then(res => {
-              let tags = []
-              res.data.msg.table.forEach(function (item) {
-                tags.push(item.tag)
-              })
-              this.infoData.selfDescTags = tags
-            })
-        }
+    let userInfo = this.$store.getters.mustGetUser
+    this.infoData.avatarURL = this.getUrl(userInfo.avatar)
+    this.infoData.avatar = userInfo.avatar
+
+    this.$ajax.get('/user/selfDescTags').then(res => {
+      let tags = []
+      res.data.msg.table.forEach(function (item) {
+        tags.push(item.tag)
       })
+      this.infoData.selfDescTags = tags
+    })
   },
   methods: {
     handleClose (tag) {
@@ -182,7 +168,13 @@ export default {
       this.infoData.avatarURL = URL.createObjectURL(file.raw)
       this.infoData.avatar = res.msg[0]
     },
+    userAvatarUrl (img) {
+      if (img) {
+        return process.env.VUE_APP_RESOURCE_URL + img
+      }
 
+      return require('@/assets/imgs/defaultHead.png')
+    },
     getUrl (img) {
       return process.env.VUE_APP_RESOURCE_URL + img
     },
@@ -190,7 +182,6 @@ export default {
     updateInfo: function () {
       let node = this.$refs['nativeCascader'].getCheckedNodes()[0]
       this.$ajax.post('/user/updateInfo', {
-        email: sessionStorage.getItem('email'),
         name: this.infoData.name,
         sex: this.infoData.sex,
         phone: this.infoData.phone,
@@ -200,14 +191,18 @@ export default {
       })
         .then(res => {
           if (res.data.success) {
-            this.$message.success({
-              duration: 1000,
-              message: '信息修改成功！',
-              onClose: () => {
-                this.$loading().close()
-                this.reload()
-              }
-            })
+            this.$ajax.get('/user/userInfo')
+              .then(res => {
+                this.$store.dispatch('setUser', res.data.msg)
+                this.$message.success({
+                  duration: 1000,
+                  message: '信息修改成功！',
+                  onClose: () => {
+                    this.$loading().close()
+                    this.reload()
+                  }
+                })
+              })
           }
         })
         .catch(() => {
@@ -238,7 +233,7 @@ export default {
     font-size: 16px;
   }
 
-  .el-tabs--border-card>.el-tabs__content {
+  .el-tabs--border-card > .el-tabs__content {
     padding: 20px;
   }
 
@@ -254,12 +249,12 @@ export default {
     padding: 0 20px 0 0;
   }
 
-  .el-tabs--border-card>.el-tabs__header {
+  .el-tabs--border-card > .el-tabs__header {
     background-color: #faf8f3;
   }
 
-  /deep/ .el-tabs--border-card>.el-tabs__header .el-tabs__item.is-active,
-  /deep/ .el-tabs--border-card>.el-tabs__header .el-tabs__item:not(.is-disabled):hover {
+  /deep/ .el-tabs--border-card > .el-tabs__header .el-tabs__item.is-active,
+  /deep/ .el-tabs--border-card > .el-tabs__header .el-tabs__item:not(.is-disabled):hover {
     color: #ff961e;
   }
 
@@ -268,11 +263,11 @@ export default {
     background: #ff961e;
   }
 
-  /deep/ .el-radio__input.is-checked+.el-radio__label {
+  /deep/ .el-radio__input.is-checked + .el-radio__label {
     color: #ff961e;
   }
 
-  /deep/ .el-tabs--border-card>.el-tabs__header .el-tabs__item:not(.is-disabled):hover {
+  /deep/ .el-tabs--border-card > .el-tabs__header .el-tabs__item:not(.is-disabled):hover {
     color: #ff961e;
   }
 </style>

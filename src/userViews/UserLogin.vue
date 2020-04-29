@@ -103,9 +103,8 @@ export default {
               this.$message.success({
                 message: '登录成功！'
               })
-              window.sessionStorage.setItem('token', res.data.token)
-              window.sessionStorage.setItem('email', this.LoginForm.email)
-              this.$router.push('/Index')
+              this.$store.dispatch('setUser', res.data.msg)
+              this.$router.push('/')
             } else {
               this.$message.error({
                 message: res.data.msg
