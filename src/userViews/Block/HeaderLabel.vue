@@ -41,7 +41,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
   .header-label {
     list-style: none;
     height: 26px;
