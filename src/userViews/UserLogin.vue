@@ -5,15 +5,16 @@
         <h2 class="title">欢迎登录</h2>
         <el-form :model="LoginForm" :rules="LoginFormRules" ref="LoginFormRef" class="login-form">
           <el-form-item prop="email">
-            <el-input v-model="LoginForm.email" prefix-icon="el-icon-user" clearable></el-input>
+            <el-input v-model="LoginForm.email" prefix-icon="el-icon-user" clearable placeholder="请输入邮箱"></el-input>
           </el-form-item>
           <el-form-item prop="pwd">
-            <el-input v-model="LoginForm.pwd" type="password" prefix-icon="el-icon-lock" clearable></el-input>
+            <el-input v-model="LoginForm.pwd" type="password" prefix-icon="el-icon-lock" clearable placeholder="请输入密码"></el-input>
           </el-form-item>
           <el-form-item>
             <el-button class="btns" type="warning" @click="login">登录</el-button>
             <el-button class="btns" type="info" @click="toRegister">去注册</el-button>
           </el-form-item>
+          <p style="color: #c5bcb2;font-size: 14px">测试账户: 2507388395@qq.com 密码: 123321 <el-button type="warning" plain size="mini" @click="toAdmin">管理后台</el-button></p>
         </el-form>
       </div>
       <div class="register-box"  v-show="!isLogin">
@@ -47,7 +48,7 @@ export default {
     return {
       isLogin: true,
       LoginForm: {
-        email: '2507388395@qq.com',
+        email: '',
         pwd: ''
       },
       RegisterForm: {
@@ -88,6 +89,9 @@ export default {
       this.RegisterForm.email = ''
       this.RegisterForm.pwd = ''
       this.RegisterForm.code = ''
+    },
+    toAdmin () {
+      this.$router.push('/Login')
     },
     toRegister () {
       this.isLogin = false
