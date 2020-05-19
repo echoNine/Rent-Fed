@@ -1,5 +1,5 @@
 <template>
-  <div class="UserTobeOwnerDiv">
+  <div class="LeaseCommissionDiv">
     <el-container>
       <el-header>
         <el-row class="headerOwner">
@@ -11,16 +11,99 @@
           </el-col>
           <el-col :span="4" style="line-height: 60px">
             <el-button type="warning" @click="dialogFormVisible = true">立即申请</el-button>
-            <el-dialog title="在线申请" :visible.sync="dialogFormVisible" width="40%">
+            <el-dialog title="委托房源" :visible.sync="dialogFormVisible" width="60%">
               <el-form :model="entrustForm" ref="entrustForm">
-                <el-form-item label="房屋城市：" :label-width="formLabelWidth" prop="houseCity" required>
-                  <el-select v-model="entrustForm.houseCity" clearable>
-                    <el-option v-for="(item, index) in cityList" :key="index" :label="item" :value="item"></el-option>
-                  </el-select>
-                </el-form-item>
-                <el-form-item label="小区名称：" :label-width="formLabelWidth" prop="houseCommunity" required>
-                  <el-input v-model="entrustForm.houseCommunity" clearable></el-input>
-                </el-form-item>
+                <el-row :gutter="30">
+                  <el-col :span="12">
+                    <el-form-item label="房屋城市：" :label-width="formLabelWidth" prop="atCity" required>
+                      <el-select v-model="entrustForm.atCity" clearable>
+                        <el-option v-for="(item, index) in cityList" :key="index" :label="item" :value="item"></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-form-item label="小区名称：" :label-width="formLabelWidth" prop="community" required>
+                      <el-input v-model="entrustForm.community" clearable></el-input>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-row :gutter="30">
+                  <el-col :span="12">
+                    <el-form-item label="详细地址：" :label-width="formLabelWidth" prop="address" required>
+                      <el-input v-model="entrustForm.address" clearable></el-input>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-form-item label="所在楼层：" :label-width="formLabelWidth" prop="floor" required>
+                      <el-input v-model="entrustForm.floor" clearable></el-input>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-row :gutter="30">
+                  <el-col :span="12">
+                    <el-form-item label="房屋户型：" :label-width="formLabelWidth" prop="layout" required>
+                      <el-input v-model="entrustForm.layout" clearable></el-input>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-form-item label="房屋朝向：" :label-width="formLabelWidth" prop="orientation" required>
+                      <el-select v-model="entrustForm.orientation" placeholder="请选择房源朝向">
+                        <el-option label="朝南" value="朝南"></el-option>
+                        <el-option label="朝北" value="朝北"></el-option>
+                        <el-option label="朝东" value="朝东"></el-option>
+                        <el-option label="朝西" value="朝西"></el-option>
+                        <el-option label="东南朝向" value="东南朝向"></el-option>
+                        <el-option label="西南朝向" value="西南朝向"></el-option>
+                        <el-option label="东北朝向" value="东北朝向"></el-option>
+                        <el-option label="西北朝向" value="西北朝向"></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-row :gutter="30">
+                  <el-col :span="12">
+                    <el-form-item label="使用面积：" :label-width="formLabelWidth" prop="area" required>
+                      <el-input v-model="entrustForm.area" clearable></el-input>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-form-item label="建筑年份：" :label-width="formLabelWidth" prop="buildAt" required>
+                      <el-date-picker type="date" placeholder="选择日期" v-model="entrustForm.buildAt"/>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-row :gutter="30">
+                  <el-col :span="12">
+                    <el-form-item label="门牌号码：" :label-width="formLabelWidth" prop="houseNum" required>
+                      <el-input v-model="entrustForm.houseNum" clearable></el-input>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-form-item label="房间号码：" :label-width="formLabelWidth" prop="roomNum">
+                      <el-input v-model="entrustForm.roomNum" clearable></el-input>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-row :gutter="30">
+                  <el-col :span="12">
+                    <el-form-item label="配置独卫：" :label-width="formLabelWidth" prop="toilet" required>
+                      <el-switch v-model="entrustForm.toilet"></el-switch>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-form-item label="配置阳台：" :label-width="formLabelWidth" prop="balcony" required>
+                      <el-switch v-model="entrustForm.balcony"></el-switch>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-row>
+                  <el-form-item label="租用类型：" :label-width="formLabelWidth" prop="rentType" required>
+                    <el-radio-group v-model="entrustForm.rentType">
+                      <el-radio label="整租"></el-radio>
+                      <el-radio label="合租"></el-radio>
+                    </el-radio-group>
+                  </el-form-item>
+                </el-row>
               </el-form>
               <div slot="footer" class="dialog-footer">
                 <el-button type="warning" @click="submitEntrust">提交申请</el-button>
@@ -121,7 +204,7 @@ export default {
     Logo,
     HeaderLabel
   },
-  name: 'ToBeOwner',
+  name: 'LeaseCommission',
   inject: ['reload'],
   data () {
     return {
@@ -133,21 +216,27 @@ export default {
       formLabelWidth: '100px',
       cityList: ['北京', '上海', '深圳', '杭州', '南京', '广州', '武汉', '成都', '天津'],
       entrustForm: {
-        houseCity: '',
-        houseCommunity: ''
+        atCity: '',
+        address: '',
+        area: '',
+        community: '',
+        floor: '',
+        layout: '',
+        orientation: '',
+        buildAt: '',
+        toilet: false,
+        balcony: false,
+        rentType: '整租',
+        houseNum: '',
+        roomNum: ''
       }
     }
   },
   created () {
-    let userInfo = this.$store.getters.userInfo
-    if (userInfo) {
-      this.logined = true
-      this.userName = userInfo.name
-      this.avatarImg = this.getUrl(userInfo.avatar)
-    } else {
-      this.$message.warning('请先登录')
-      this.$router.push('/UserLogin')
-    }
+    let userInfo = this.$store.getters.mustGetUser
+    this.logined = true
+    this.userName = userInfo.name
+    this.avatarImg = this.getUrl(userInfo.avatar)
   },
   methods: {
     userAvatarUrl (img) {
@@ -178,15 +267,26 @@ export default {
         if (valid) {
           this.$loading({ text: '正在提交, 请稍等...' })
           this.dialogFormVisible = false
-          this.$ajax.post('/frontend/user/toBeOwner', {
-            houseCity: this.entrustForm.houseCity,
-            houseCommunity: this.entrustForm.houseCommunity
+          this.$ajax.post('/frontend/house/createHouseCommission', {
+            atCity: this.entrustForm.atCity,
+            address: this.entrustForm.address,
+            area: this.entrustForm.area,
+            community: this.entrustForm.community,
+            floor: this.entrustForm.floor,
+            layout: this.entrustForm.layout,
+            orientation: this.entrustForm.orientation,
+            buildAt: this.$moment(this.entrustForm.buildAt).format('YYYY-MM-DD'),
+            toilet: this.convertBoolStatus(this.entrustForm.toilet),
+            balcony: this.convertBoolStatus(this.entrustForm.balcony),
+            rentType: this.convertRentType(this.entrustForm.rentType),
+            houseNum: this.entrustForm.houseNum,
+            roomNum: this.entrustForm.roomNum
           })
             .then(res => {
               if (res.data.success) {
                 this.$message.success({
                   duration: 1000,
-                  message: '已成功提交您的委托申请！',
+                  message: '已成功提交您的房源！',
                   onClose: () => {
                     this.$loading().close()
                     this.dialogFormVisible = false
@@ -204,6 +304,23 @@ export default {
       })
     },
 
+    convertRentType: function (rentType) {
+      switch (rentType) {
+        case '整租':
+          return 'wholeRented'
+        case '合租':
+          return 'cotenancy'
+      }
+    },
+    convertBoolStatus: function (boolStatus) {
+      switch (boolStatus) {
+        case true:
+          return 1
+        case false:
+          return 0
+      }
+    },
+
     handleCommand (command) {
       if (command === 'center') {
         this.$router.push('/TenantCenter')
@@ -212,15 +329,15 @@ export default {
         if (this.$route.path !== '/') {
           this.$router.push('/')
         }
+        this.reload()
       }
-      this.reload()
     }
   }
 }
 </script>
 
 <style lang="scss">
-  .UserTobeOwnerDiv {
+  .LeaseCommissionDiv {
     width: 100%;
     height: 100%;
     #app, .el-container {
@@ -330,6 +447,20 @@ export default {
       text-align:justify;
       line-height: 26px;
       color: gray;
+    }
+
+    .el-switch.is-checked .el-switch__core {
+      border-color: #f9c341;
+      background-color: #f9c341;
+    }
+
+    .el-radio__input.is-checked .el-radio__inner {
+      border-color: #f9c341;
+      background: #f9c341 ;
+    }
+
+    .el-radio__input.is-checked+.el-radio__label {
+      color: #f9c341;
     }
   }
 </style>

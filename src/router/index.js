@@ -13,6 +13,11 @@ export const routers = {
       component: () => import('../adminViews/Login.vue')
     },
     {
+      path: '/AdminHouseDetail',
+      name: 'AdminHouseDetail',
+      component: () => import('../adminViews/House/AdminHouseDetail.vue')
+    },
+    {
       path: '/ShowData',
       component: () => import('../adminViews/LayOut.vue'),
       meta: {
@@ -32,14 +37,14 @@ export const routers = {
       component: () => import('../adminViews/LayOut.vue'),
       meta: {
         icon: 'el-icon-setting',
-        title: '个人信息'
+        title: '个人中心'
       },
       children: [
         {
           path: 'PersonalCenter',
           name: 'PersonalCenter',
           meta: {
-            title: '个人中心'
+            title: '个人空间'
           },
           component: () => import('../adminViews/Info/PersonalCenter.vue')
         },
@@ -47,7 +52,7 @@ export const routers = {
           path: 'PersonalSetting',
           name: 'PersonalSetting',
           meta: {
-            title: '个人设置'
+            title: '个人信息'
           },
           component: () => import('../adminViews/Info/PersonalSetting.vue')
         }
@@ -96,6 +101,14 @@ export const routers = {
       },
       children: [
         {
+          path: 'ApplyForHouse',
+          name: 'ApplyForHouse',
+          meta: {
+            title: '房源操作'
+          },
+          component: () => import('../adminViews/House/ApplyForHouse.vue')
+        },
+        {
           path: 'OpHouse',
           name: 'OpHouse',
           meta: {
@@ -110,6 +123,14 @@ export const routers = {
             title: '发布房源'
           },
           component: () => import('../adminViews/House/AddHouse.vue')
+        },
+        {
+          path: 'OrderHouse',
+          name: 'OrderHouse',
+          meta: {
+            title: '约看申请'
+          },
+          component: () => import('../adminViews/House/OrderHouse.vue')
         }
       ]
     },
@@ -121,6 +142,14 @@ export const routers = {
         title: '合同管理'
       },
       children: [
+        {
+          path: 'ApplyRenewal',
+          name: 'ApplyRenewal',
+          meta: {
+            title: '合同续签申请'
+          },
+          component: () => import('../adminViews/Contract/ApplyRenewal.vue')
+        },
         {
           path: 'WithOwner',
           name: 'WithOwner',
@@ -148,20 +177,20 @@ export const routers = {
       },
       children: [
         {
-          path: 'RentOut',
-          name: 'RentOut',
+          path: 'Pay',
+          name: 'Pay',
           meta: {
             title: '委托招租财务'
           },
-          component: () => import('../adminViews/Finance/RentOut.vue')
+          component: () => import('../adminViews/Finance/Pay.vue')
         },
         {
-          path: 'RentIn',
-          name: 'RentIn',
+          path: 'Income',
+          name: 'Income',
           meta: {
             title: '房屋出租财务'
           },
-          component: () => import('../adminViews/Finance/RentIn.vue')
+          component: () => import('../adminViews/Finance/Income.vue')
         }
       ]
     },
@@ -189,6 +218,11 @@ export const routers = {
       path: '/ToBeOwner',
       name: 'ToBeOwner',
       component: () => import('../userViews/ToBeOwner.vue')
+    },
+    {
+      path: '/LeaseCommission',
+      name: 'LeaseCommission',
+      component: () => import('../userViews/LeaseCommission.vue')
     },
     {
       path: '/TenantCenter',

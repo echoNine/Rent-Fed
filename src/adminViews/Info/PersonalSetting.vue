@@ -1,12 +1,13 @@
 <template>
-  <el-tabs tab-position="left" style="height: 100%" type="border-card" @tab-click="handleTab">
+  <div class="PersonSettingDiv">
+    <el-tabs tab-position="left" style="height: 100%" type="border-card" @tab-click="handleTab">
       <el-tab-pane label="基本信息">
         <div class="headerTitle">基本信息</div>
         <el-form ref="infoForm" :model="infoForm" label-width="90px">
           <el-row>
             <el-col :span="12">
               <el-form-item label="姓名">
-                <el-input v-model="infoForm.username"></el-input>
+                <el-input v-model="infoForm.name"></el-input>
               </el-form-item>
               <el-form-item label="性别">
                 <el-radio-group v-model="infoForm.sex">
@@ -66,14 +67,20 @@
       </el-tab-pane>
       <el-tab-pane label="账户管理">
         <div class="headerTitle">账户管理</div>
-        <el-form ref="accountForm" :model="accountForm" v-if="toChangePwd">
+        <el-form ref="accountForm" :model="accountForm" status-icon :rules="accountRules">
           <el-row style="margin-left: 10px;">
             <el-col :span="18">
               <el-form-item label="用户账号">
-                <el-input v-model="accountForm.email"></el-input>
+                <el-input v-model="accountForm.email" disabled></el-input>
               </el-form-item>
-              <el-form-item label="登录密码">
-                <el-input v-model="accountForm.pwd"></el-input>
+              <el-form-item label="登录密码" prop="pwd">
+                <el-input type="password" v-model="accountForm.pwd"></el-input>
+              </el-form-item>
+              <el-form-item label="新密码" prop="newPwd">
+                <el-input type="password" v-model="accountForm.newPwd"></el-input>
+              </el-form-item>
+              <el-form-item label="确认密码" prop="checkNewPwd">
+                <el-input type="password" v-model="accountForm.checkNewPwd"></el-input>
               </el-form-item>
               <el-form-item>
                 <el-button type="primary" @click="updatePwd">修改登录密码</el-button>
@@ -81,23 +88,9 @@
             </el-col>
           </el-row>
         </el-form>
-        <el-form v-else :model="updatePwdForm" status-icon :rules="rules" ref="updatePwdForm" label-width="100px" style="width: 60%; margin-top: 5%">
-          <el-form-item label="原密码">
-            <el-input type="password" v-model="updatePwdForm.oldPwd" autocomplete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="新密码">
-            <el-input type="password" v-model="updatePwdForm.newPwd" autocomplete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="确认密码">
-            <el-input type="password" v-model="updatePwdForm.checkNewPwd" autocomplete="off"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" size="small" @click="submitForm('updatePwdForm')">保存</el-button>
-            <el-button size="small" @click="resetForm('updatePwdForm')">重置</el-button>
-          </el-form-item>
-        </el-form>
       </el-tab-pane>
     </el-tabs>
+  </div>
 </template>
 
 <script>
@@ -106,6 +99,15 @@ export default {
   name: 'PersonalSetting',
   inject: ['reload'],
   data () {
+    var validatePass = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请再次输入密码'))
+      } else if (value !== this.accountForm.newPwd) {
+        callback(new Error('两次输入密码不一致!'))
+      } else {
+        callback()
+      }
+    }
     return {
       uploadUrl: process.env.VUE_APP_BASE_URL + '/file/upload',
       infoForm: {
@@ -120,47 +122,36 @@ export default {
       },
       accountForm: {
         email: '',
-        pwd: ''
-      },
-      updatePwdForm: {
-        oldPwd: '',
+        pwd: '',
         newPwd: '',
         checkNewPwd: ''
       },
-      toChangePwd: true,
       inputVisible: false,
       inputValue: '',
-      options: nativeList
+      options: nativeList,
+      accountRules: {
+        checkNewPwd: { validator: validatePass, trigger: 'blur' }
+      }
     }
   },
   created: function () {
-    let adminToken = sessionStorage.getItem('adminToken')
-    this.$ajax.get('/admin/adminList', {
-      params: {
-        email: sessionStorage.getItem('adminEmail')
-      }
-    })
+    this.$ajax.get('/backend/admin/getAdminInfo')
       .then(res => {
-        if (adminToken != null) {
-          if (res.data.msg.table[0].avatar) {
-            this.infoForm.avatarURL = this.getUrl(res.data.msg.table[0].avatar)
-            this.infoForm.avatar = res.data.msg.table[0].avatar
-          } else {
-            this.infoForm.avatarURL = require('@/assets/imgs/defaultHead.png')
-          }
-          this.$ajax.get('/admin/selfDescTags', {
-            params: {
-              email: sessionStorage.getItem('adminEmail')
-            }
-          })
-            .then(res => {
-              let tags = []
-              res.data.msg.table.forEach(function (item) {
-                tags.push(item.tag)
-              })
-              this.infoForm.selfDescTags = tags
-            })
+        if (res.data.msg.table[0].avatar) {
+          this.infoForm.avatarURL = this.getUrl(res.data.msg.table[0].avatar)
+          this.infoForm.avatar = res.data.msg.table[0].avatar
+        } else {
+          this.infoForm.avatarURL = require('@/assets/imgs/defaultHead.png')
         }
+        this.accountForm.email = res.data.msg.table[0].email
+        this.$ajax.get('/backend/admin/selfDescTags')
+          .then(res => {
+            let tags = []
+            res.data.msg.table.forEach(function (item) {
+              tags.push(item.tag)
+            })
+            this.infoForm.selfDescTags = tags
+          })
       })
   },
   methods: {
@@ -173,7 +164,6 @@ export default {
         this.$refs.saveTagInput.$refs.input.focus()
       })
     },
-
     handleInputConfirm () {
       let inputValue = this.inputValue
       if (inputValue) {
@@ -185,18 +175,14 @@ export default {
     getFilePath (res, file) {
       this.infoForm.avatarURL = URL.createObjectURL(file.raw)
       this.infoForm.avatar = res.msg[0]
-      console.log(this.infoForm.avatar)
     },
-
     getUrl (img) {
       return process.env.VUE_APP_RESOURCE_URL + img
     },
-
     updateInfo: function () {
       let node = this.$refs['nativeCascader'].getCheckedNodes()[0]
-      this.$ajax.post('/admin/updateInfo', {
-        email: sessionStorage.getItem('adminEmail'),
-        name: this.infoForm.username,
+      this.$ajax.post('/backend/admin/updateInfo', {
+        name: this.infoForm.name,
         sex: this.infoForm.sex,
         phone: this.infoForm.phone,
         native: node.pathLabels[0] + node.pathLabels[1],
@@ -222,7 +208,38 @@ export default {
         })
     },
     updatePwd: function () {
-      this.toChangePwd = false
+      this.$refs['accountForm'].validate((valid) => {
+        if (valid) {
+          this.$ajax.post('/backend/admin/updatePwd', {
+            pwd: this.accountForm.pwd,
+            newPwd: this.accountForm.newPwd
+          })
+            .then(res => {
+              if (res.data.success) {
+                this.$message.success({
+                  duration: 1000,
+                  message: '密码修改成功！请重新登录',
+                  onClose: () => {
+                    this.$loading().close()
+                    this.$router.push('/Login')
+                  }
+                })
+              } else {
+                this.$message.error({
+                  duration: 1000,
+                  message: '密码修改失败',
+                  onClose: () => {
+                    this.$loading().close()
+                  }
+                })
+                this.toChangePwd = true
+              }
+            })
+            .catch(() => {
+              this.$loading().close()
+            })
+        }
+      })
     },
     handleTab: function () {
       this.toChangePwd = true
@@ -231,37 +248,45 @@ export default {
 }
 </script>
 
-<style>
-  .headerTitle {
-    color: rgba(0, 0, 0, .85);
-    font-weight: 500;
-    font-size: 20px;
-    line-height: 28px;
-    margin: 10px 0 30px 10px;
-  }
+<style lang="scss">
+  .PersonSettingDiv {
+    width: 100%;
+    .headerTitle {
+      color: rgba(0, 0, 0, .85);
+      font-weight: 500;
+      font-size: 20px;
+      line-height: 28px;
+      margin: 10px 0 30px 10px;
+    }
 
-  .avatarImg {
-    width: 160px;
-    height: 160px;
-    margin-left: 70px;
-  }
+    .avatarImg {
+      width: 160px;
+      height: 160px;
+      margin-left: 70px;
+    }
 
-  .el-tabs--left.el-tabs--border-card .el-tabs__item.is-left {
-    text-align: center;
-    line-height: 50px;
-    height: 50px;
-    font-size: 16px;
-  }
+    .el-tag {
+      margin-right: 10px;
+    }
 
-  .el-tabs--left .el-tabs__header.is-left {
-    width: 15%;
-  }
+    .el-tabs--left.el-tabs--border-card .el-tabs__item.is-left {
+      text-align: center;
+      line-height: 60px;
+      height: 60px;
+      font-size: 18px;
+    }
 
-  .el-tabs__nav {
-    margin-top: 40px;
-  }
+    .el-tabs--left .el-tabs__header.is-left {
+      width: 15%;
+      height: 575px;
+    }
 
-  .el-form-item__label {
-    padding: 0 20px 0 0;
+    .el-tabs__nav {
+      margin-top: 40px;
+    }
+
+    .el-form-item__label {
+      padding: 0 20px 0 0;
+    }
   }
 </style>

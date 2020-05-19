@@ -9,7 +9,7 @@
           <div class="card-panel-text">
             用户
           </div>
-          <count-to :start-val="0" :end-val="102400" :duration="2600" class="card-panel-num" />
+          <count-to :start-val="0" :end-val='userCount' :duration="2000" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -22,7 +22,7 @@
           <div class="card-panel-text">
             房源
           </div>
-          <count-to :start-val="0" :end-val="81212" :duration="3000" class="card-panel-num" />
+          <count-to :start-val="0" :end-val='houseCount' :duration="3000" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -35,7 +35,7 @@
           <div class="card-panel-text">
             合同
           </div>
-          <count-to :start-val="0" :end-val="9280" :duration="3200" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="contractCount" :duration="3200" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -48,7 +48,7 @@
           <div class="card-panel-text">
             交易额
           </div>
-          <count-to :start-val="0" :end-val="13600" :duration="3600" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="financeCount" :duration="3600" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -60,8 +60,48 @@ import CountTo from 'vue-count-to'
 
 export default {
   name: 'DataCard',
+  data () {
+    return {
+      userCount: 0,
+      houseCount: 0,
+      contractCount: 0,
+      financeCount: 0
+    }
+  },
   components: {
     CountTo
+  },
+  created () {
+    this.getUserCount()
+    this.getHouseCount()
+    this.getContractCount()
+    this.getFinanceCount()
+  },
+  methods: {
+    getUserCount () {
+      this.$ajax.get('/backend/data/getUserCount')
+        .then(res => {
+          this.userCount = res.data.msg
+        })
+    },
+    getHouseCount () {
+      this.$ajax.get('/backend/data/getHouseCount')
+        .then(res => {
+          this.houseCount = res.data.msg
+        })
+    },
+    getContractCount () {
+      this.$ajax.get('/backend/data/getContractCount')
+        .then(res => {
+          this.contractCount = res.data.msg
+        })
+    },
+    getFinanceCount () {
+      this.$ajax.get('/backend/data/getFinanceCount')
+        .then(res => {
+          this.financeCount = res.data.msg
+        })
+    }
   }
 }
 </script>

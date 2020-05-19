@@ -11,39 +11,47 @@ export default {
   methods: {
     drawHouseChart () {
       let myChart = this.$echarts.init(document.getElementById('myHouseChart'))
-      myChart.setOption({
-        title: {
-          text: '房源状态分布',
-          left: 'center',
-          top: '5'
-        },
-        tooltip: {
-          trigger: 'item',
-          formatter: '{a} <br/>{b} : {c} ({d}%)'
-        },
-        legend: {
-          left: 'center',
-          bottom: '10',
-          data: ['未激活', '空闲', '已租用']
-        },
-        series: [
-          {
-            name: '房源状态',
-            type: 'pie',
-            roseType: 'radius',
-            radius: [28, 80],
-            center: ['50%', '45%'],
-            color: ['#2ec7c9', '#b6a2de', '#5ab1ef'],
-            data: [
-              { value: 320, name: '未激活' },
-              { value: 250, name: '空闲' },
-              { value: 290, name: '已租用' }
-            ],
-            animationEasing: 'cubicInOut',
-            animationDuration: 2600
+      this.$ajax.get('/backend/data/getHouseCountByType')
+        .then(res => {
+          let chartData = res.data.msg.countArr
+          let seriesData = []
+          let typekey = ['待发布', '空闲', '已租用']
+          for (var i = 0; i < typekey.length; i++) {
+            let outObj = {}
+            outObj.name = typekey[i]
+            outObj.value = chartData[i]
+            seriesData.push(outObj)
           }
-        ]
-      })
+          myChart.setOption({
+            title: {
+              text: '房源状态分布',
+              left: 'center',
+              top: '5'
+            },
+            tooltip: {
+              trigger: 'item',
+              formatter: '{a} <br/>{b} : {c} ({d}%)'
+            },
+            legend: {
+              left: 'center',
+              bottom: '10',
+              data: ['待发布', '空闲', '已租用']
+            },
+            series: [
+              {
+                name: '房源状态',
+                type: 'pie',
+                roseType: 'radius',
+                radius: [50, 80],
+                center: ['50%', '45%'],
+                color: ['#2ec7c9', '#b6a2de', '#5ab1ef'],
+                data: seriesData,
+                animationEasing: 'cubicInOut',
+                animationDuration: 2600
+              }
+            ]
+          })
+        })
     }
   }
 }

@@ -1,52 +1,27 @@
 <template>
-  <div class="HouseDetailDiv">
+  <div class="AdminHouseDetailDiv">
     <el-container>
       <el-header>
-        <el-page-header @back="goBackToHouseIndex" content="详情页面">
+        <el-page-header @back="goBackToOpHouse" content="详情页面">
         </el-page-header>
       </el-header>
       <el-main>
-        <el-row :gutter="40" class="main-box">
-          <el-dialog title="全屏模式" :visible.sync="dialogResourceVisible" fullscreen>
-            <div class="resource">
-              <el-carousel :interval="5000" arrow="always" v-show="isImg">
-                <el-carousel-item v-for="(item, index) in resImg" :key="index">
-                  <img :src="getUrl(item)" class="slider-img"/>
-                </el-carousel-item>
-              </el-carousel>
-              <video :src="getUrl(resVideo)" controls="controls" width="100%" height="100%" v-show="isVideo"></video>
-              <iframe :src="resModel" width="100%" height="100%" v-show="isModel" :allowfullscreen="true"></iframe>
-            </div>
-            <div class="favor" style="width: 32px">
-              <span :class="!liked ? 'el-icon-nolike' : 'el-icon-yeslike'" @click="handleCollect"/>
-            </div>
-            <div class="resBtn">
-              <span :class="{ addTagClass: isImg }" @click="showImg">图片</span>
-              <span :class="{ addTagClass: isVideo }" @click="showVideo">视频</span>
-              <span :class="{ addTagClass: isModel }" @click="showModel">3D模型</span>
-            </div>
-          </el-dialog>
-          <el-col :span="15" class="resource-box">
-            <div class="resource">
-                <el-carousel :interval="5000" arrow="always" v-show="isImg">
-                  <el-carousel-item v-for="(item, index) in resImg" :key="index">
-                    <img :src="getUrl(item)" class="slider-img"/>
-                  </el-carousel-item>
-                </el-carousel>
-              <video :src="getUrl(resVideo)" controls="controls" width="100%" height="500px" v-show="isVideo"></video>
-              <iframe :src="resModel" width="100%" height="500px" v-show="isModel" :allowfullscreen="true"></iframe>
-            </div>
-            <div class="favor">
-              <span :class="!liked ? 'el-icon-nolike' : 'el-icon-yeslike'" @click="handleCollect"/>|
-              <span class="el-icon-full-screen" @click="dialogResourceVisible = true"/>
-            </div>
+        <el-row :gutter="40">
+          <el-col :span="15">
+            <el-carousel :interval="5000" arrow="always" v-show="isImg">
+              <el-carousel-item v-for="(item, index) in resImg" :key="index">
+                <img :src="getUrl(item)" width="100%" height="500px"/>
+              </el-carousel-item>
+            </el-carousel>
+            <video :src="getUrl(resVideo)" controls="controls" width="100%" height="500px" v-show="isVideo"></video>
+            <iframe :src="resModel" width="100%" height="500px" v-show="isModel"></iframe>
             <div class="resBtn">
               <span :class="{ addTagClass: isImg }" @click="showImg">图片</span>
               <span :class="{ addTagClass: isVideo }" @click="showVideo">视频</span>
               <span :class="{ addTagClass: isModel }" @click="showModel">3D模型</span>
             </div>
           </el-col>
-          <el-col :span="9" class="house-detail-box">
+          <el-col :span="9">
             <div class="house-title">
               <span class="rent-type">{{houseData.rentType}}</span>
               <span>{{houseData.community}}-</span>
@@ -77,35 +52,15 @@
                   <el-col class="content" :span="18">{{houseData.floor}}</el-col>
                 </el-row>
                 <el-row>
-                  <el-col class="title" :span="6">建筑年份</el-col>
+                  <el-col class="title" :span="6">建成年份</el-col>
                   <el-col class="content" :span="18">{{houseData.buildAt}}</el-col>
                 </el-row>
                 <el-row style="margin-left: 25%; margin-top: 10px">
-                  <el-tag type="warning" v-show="this.houseData.toilet">独卫</el-tag>
-                  <el-tag type="warning" v-show="this.houseData.balcony">阳台</el-tag>
+                  <el-tag v-show="this.houseData.toilet">独卫</el-tag>
+                  <el-tag v-show="this.houseData.balcony">阳台</el-tag>
                 </el-row>
               </div>
             </div>
-            <el-button type="warning" class="order-btn" @click="toOrder">预约看房</el-button>
-            <el-dialog title="房源约看" :visible.sync="dialogFormVisible" width="35%">
-              <el-form :model="orderData" ref="orderData">
-                <el-form-item prop="orderTime" required clearable>
-                  <el-date-picker
-                    v-model="orderData.orderTime"
-                    type="date"
-                    format="yyyy-MM-dd"
-                    value-format="yyyy-MM-dd"
-                    placeholder="选择约看时间">
-                  </el-date-picker>
-                </el-form-item>
-                <el-form-item prop="orderPhone" required>
-                  <el-input v-model="orderData.orderPhone" prefix-icon="el-icon-phone-outline" clearable placeholder="请输入联系方式"></el-input>
-                </el-form-item>
-              </el-form>
-              <div slot="footer" class="dialog-footer">
-                <el-button type="warning" @click="submitOrder">提交约看</el-button>
-              </div>
-            </el-dialog>
           </el-col>
         </el-row>
       </el-main>
@@ -123,7 +78,7 @@
             <i class="el-icon-bed" style="margin-right: 15px; font-size: 22px"></i>
             <span style="font-size: 20px">房屋配置</span>
           </div>
-          <el-row style="color: #ffba15; text-align: center; font-size: 60px; margin-bottom: 16px">
+          <el-row style="color: #409EFF; text-align: center; font-size: 60px; margin-bottom: 16px">
             <el-col :span="4"><i class="el-icon-bed"></i></el-col>
             <el-col :span="4"><i class="el-icon-tv"></i></el-col>
             <el-col :span="4"><i class="el-icon-wifi"></i></el-col>
@@ -147,7 +102,7 @@
 
 <script>
 export default {
-  name: 'HouseDetail',
+  name: 'AdminHouseDetail',
   data () {
     return {
       resImg: [],
@@ -173,52 +128,37 @@ export default {
         intro: '',
         toilet: '',
         balcony: ''
-      },
-      liked: '',
-      dialogFormVisible: false,
-      dialogResourceVisible: false,
-      orderData: {
-        orderTime: '',
-        orderPhone: ''
       }
     }
   },
   methods: {
-    goBack: function () {
-      this.$router.push('/HouseIndex')
-    },
     getInitHouseData: function () {
-      this.$ajax.get('frontend/house/getHouseDetailInfo', {
+      this.$ajax.get('backend/house/getHouseDetailInfo', {
         params: {
           houseId: this.$route.query.houseId
         }
       })
         .then(res => {
-          if (res.data.msg.liked) {
-            this.liked = true
-          } else {
-            this.liked = false
-          }
-          if (res.data.msg.self.table[0].rentType === 'cotenancy') {
+          if (res.data.msg.table[0].rentType === 'cotenancy') {
             this.isPart = true
           } else {
             this.isPart = false
           }
-          this.houseData.rentType = this.convertRentType(res.data.msg.self.table[0].rentType)
-          this.houseData.community = res.data.msg.self.table[0].community
-          this.houseData.houseNum = res.data.msg.self.table[0].houseNum
-          this.houseData.roomNum = res.data.msg.self.table[0].roomNum
-          this.houseData.rentPrice = res.data.msg.self.table[0].rentPrice
-          this.houseData.payForm = this.convertPayForm(res.data.msg.self.table[0].payForm)
-          this.houseData.area = res.data.msg.self.table[0].area
-          this.houseData.orientation = res.data.msg.self.table[0].orientation
-          this.houseData.layout = res.data.msg.self.table[0].layout
-          this.houseData.address = res.data.msg.self.table[0].address
-          this.houseData.floor = res.data.msg.self.table[0].floor
-          this.houseData.buildAt = this.$moment(res.data.msg.self.table[0].buildAt).format('YYYY年MM月DD日')
-          this.houseData.intro = res.data.msg.self.table[0].intro
-          this.houseData.toilet = res.data.msg.self.table[0].toilet
-          this.houseData.balcony = res.data.msg.self.table[0].balcony
+          this.houseData.rentType = this.convertRentType(res.data.msg.table[0].rentType)
+          this.houseData.community = res.data.msg.table[0].community
+          this.houseData.houseNum = res.data.msg.table[0].houseNum
+          this.houseData.roomNum = res.data.msg.table[0].roomNum
+          this.houseData.rentPrice = res.data.msg.table[0].rentPrice
+          this.houseData.payForm = this.convertPayForm(res.data.msg.table[0].payForm)
+          this.houseData.area = res.data.msg.table[0].area
+          this.houseData.orientation = res.data.msg.table[0].orientation
+          this.houseData.layout = res.data.msg.table[0].layout
+          this.houseData.address = res.data.msg.table[0].address
+          this.houseData.floor = res.data.msg.table[0].floor
+          this.houseData.buildAt = this.$moment(res.data.msg.table[0].buildAt).format('YYYY年MM月DD日')
+          this.houseData.intro = res.data.msg.table[0].intro
+          this.houseData.toilet = res.data.msg.table[0].toilet
+          this.houseData.balcony = res.data.msg.table[0].balcony
         })
     },
     convertRentType (rentType) {
@@ -238,7 +178,7 @@ export default {
       }
     },
     getResImg: function () {
-      this.$ajax.get('/frontend/house/getResOfHouse', {
+      this.$ajax.get('backend/house/getResOfHouse', {
         params: {
           houseId: this.$route.query.houseId,
           resType: 'img'
@@ -255,7 +195,7 @@ export default {
         })
     },
     getResVideo: function () {
-      this.$ajax.get('/frontend/house/getResOfHouse', {
+      this.$ajax.get('backend/house/getResOfHouse', {
         params: {
           houseId: this.$route.query.houseId,
           resType: 'video'
@@ -268,7 +208,7 @@ export default {
         })
     },
     getResModel: function () {
-      this.$ajax.get('/frontend/house/getResOfHouse', {
+      this.$ajax.get('backend/house/getResOfHouse', {
         params: {
           houseId: this.$route.query.houseId,
           resType: '3d'
@@ -298,57 +238,8 @@ export default {
       this.isVideo = false
       this.isModel = true
     },
-    goBackToHouseIndex: function () {
-      this.$router.push('/HouseIndex')
-    },
-    handleCollect: function () {
-      this.liked = !this.liked
-      this.$ajax.post('/frontend/house/handleCollect', {
-        liked: this.liked,
-        houseId: this.$route.query.houseId
-      })
-        .then(res => {
-          if (res.data.success && this.liked) {
-            this.$message.success({
-              message: '已收藏该房源！'
-            })
-          } else {
-            this.$message.warning({
-              message: '已取消该房源收藏！'
-            })
-          }
-        })
-    },
-    toOrder: function () {
-      this.$ajax.post('/frontend/house/checkOrder', {
-        houseId: this.$route.query.houseId
-      })
-        .then(res => {
-          if (res.data.msg) {
-            this.$message.warning({
-              message: '该房源您已成功提交约看，但目前暂未处理，请稍等！'
-            })
-          } else {
-            this.dialogFormVisible = true
-          }
-        })
-    },
-    submitOrder: function () {
-      this.dialogFormVisible = false
-      this.$ajax.post('/frontend/house/handleOrder', {
-        houseId: this.$route.query.houseId,
-        orderTime: this.orderData.orderTime,
-        orderPhone: this.orderData.orderPhone
-      })
-        .then(res => {
-          if (res.data.success) {
-            this.$message.success({
-              message: '已完成约看！'
-            })
-            this.orderData.orderTime = ''
-            this.orderData.orderPhone = ''
-          }
-        })
+    goBackToOpHouse: function () {
+      this.$router.push('/House/OpHouse')
     }
   },
   created () {
@@ -361,17 +252,16 @@ export default {
 </script>
 
 <style lang="scss">
-  .HouseDetailDiv {
+  .AdminHouseDetailDiv {
     width: 100%;
     height: 100%;
     .resBtn {
-      width: 200px;
       background: rgba(0,0,0,.5);
       border-radius: 2px;
-      bottom: 23%;
-      left: 50%;
+      bottom: 8%;
+      left: 32%;
       padding: 6px;
-      position: relative;
+      position: absolute;
       transform: translateX(-50%);
       z-index: 10;
     }
@@ -389,7 +279,11 @@ export default {
     }
 
     .addTagClass {
-      background-color: #ffba15;
+      background-color: #3a8ee6;
+    }
+
+    .el-tag {
+      margin-right: 10px;
     }
     .el-header {
       padding: 0;
@@ -400,7 +294,6 @@ export default {
 
     .el-main, .el-footer {
       width: 92%;
-      height: 100%;
       margin: 0 auto;
     }
 
@@ -411,24 +304,19 @@ export default {
     }
 
     .el-carousel__container {
-      height: 100%;
-    }
-
-    .slider-img {
-      width: 100%;
-      height: 100%;
+      height: 500px;
     }
 
     .house-title {
       font-size: 24px;
       color: #333;
       font-weight: 600;
-      margin-bottom: 20px;
+      margin-bottom: 28px;
     }
 
     .house-title .rent-type{
       font-size: 22px;
-      background-color: #ffba15;
+      background-color: #409EFF;
       color: #fff;
       padding: 4px 6px;
       border-radius: 5px;
@@ -438,17 +326,17 @@ export default {
     }
 
     .house-price {
-      color: #ffba15;
+      color: #409EFF;
       font-size: 30px;
       margin-bottom: 24px;
     }
 
     .house-detail-one {
       text-align: center;
-      padding: 10px 0;
-      margin-bottom: 20px;
+      padding: 15px 0;
+      margin-bottom: 24px;
       border: 2px solid #f6f7fb;
-      line-height: 20px;
+      line-height: 30px;
     }
 
     .house-detail-two {
@@ -458,15 +346,15 @@ export default {
     .house-detail .title{
       color: rgba(0, 0, 0, 0.5);
       font-size: 18px;
-      line-height: 40px;
-      height: 40px;
+      line-height: 45px;
+      height: 45px;
     }
 
     .house-detail .content{
       color: rgba(0,0,0,.85);
       font-size: 16px;
-      line-height: 40px;
-      height: 40px;
+      line-height: 45px;
+      height: 45px;
     }
 
     .order-btn {
@@ -533,45 +421,29 @@ export default {
       font-size: 15px;
       height: 36px;
       line-height: 36px;
-      position: relative;
-      left: 88%;
-      bottom: 97%;
+      position: absolute;
+      right: 41%;
+      top: 4%;
       z-index: 11;
-      width: 76px;
+      width: 82px;
       text-align: center;
       cursor: pointer;
     }
 
-    .favor span {
+    .favor i {
       font-size: 18px;
       margin-right: 2px;
       position: relative;
       top: -2px;
       vertical-align: middle;
-      width: 32px;
     }
 
     .el-date-editor.el-input, .el-date-editor.el-input__inner {
       width: 100%;
     }
 
-    .house-detail-box .el-dialog__body {
+    .el-dialog__body {
       padding: 30px 20px 10px;
-    }
-    .main-box {
-      padding: 0;
-    }
-    .el-tag {
-      margin-right: 10px;
-    }
-    .el-container.is-vertical {
-      height: 100%;
-    }
-    .main-box, .resource-box, .el-dialog__body, .resource, .el-carousel--horizontal {
-      height: 100%;
-    }
-    .el-icon-yeslike {
-      color: #ffba15;
     }
   }
 </style>

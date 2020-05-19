@@ -8,7 +8,7 @@
       <el-avatar :src="this.infoData.avatar" style="width: 100px; height: 100px;"></el-avatar>
       <div class="boxCenter">
         <div class="name">{{infoData.name}}</div>
-        <div class="role">{{infoData.typeName}} <i class="el-icon-female" style="color: #ff8cb5"></i></div>
+        <div class="role">用户 <i class="el-icon-female" style="color: #ff8cb5" v-show="isFemale"/><i class="el-icon-male" style="color: #93d4ff" v-show="!isFemale"/></div>
       </div>
     </div>
 
@@ -40,13 +40,13 @@ export default {
       infoData: {
         avatar: '',
         name: '',
-        typeName: '',
         sex: '',
         phone: '',
         email: '',
         native: '',
         selfDescTags: []
-      }
+      },
+      isFemale: ''
     }
   },
   methods: {
@@ -65,17 +65,13 @@ export default {
     let userInfo = this.$store.getters.mustGetUser
     this.infoData.avatar = this.userAvatarUrl(userInfo.avatar)
     this.infoData.name = userInfo.name
-    this.infoData.typeName = userInfo.typeName
     this.infoData.sex = userInfo.sex
+    this.isFemale = this.infoData.sex === '女'
     this.infoData.phone = userInfo.phone
     this.infoData.email = userInfo.email
     this.infoData.native = userInfo.native
 
-    this.$ajax.get('/user/selfDescTags', {
-      params: {
-        email: sessionStorage.getItem('email')
-      }
-    })
+    this.$ajax.get('/frontend/user/selfDescTags')
       .then(res => {
         let tags = []
         res.data.msg.table.forEach(function (item) {

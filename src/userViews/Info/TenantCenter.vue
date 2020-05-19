@@ -1,19 +1,21 @@
 <template>
-  <el-container class="out-container">
-    <el-header>
-      <info-header @getSettingStatus="getSettingStatus"/>
-    </el-header>
-    <el-container class="in-container">
-      <el-aside width="320px">
-        <user-card v-show="isSetting"/>
-        <item-card v-show="!isSetting"/>
-      </el-aside>
-      <el-main>
-        <personal-setting v-show="isSetting"/>
-        <personal-space v-show="!isSetting"/>
-      </el-main>
+  <div class="TenantCenterDiv">
+    <el-container class="out-container">
+      <el-header>
+        <info-header @getSettingStatus="getSettingStatus"/>
+      </el-header>
+      <el-container class="in-container">
+        <el-aside width="320px">
+          <user-card v-show="isSetting"/>
+          <item-card v-show="!isSetting"/>
+        </el-aside>
+        <el-main>
+          <personal-setting v-show="isSetting"/>
+          <personal-space v-show="!isSetting"/>
+        </el-main>
+      </el-container>
     </el-container>
-  </el-container>
+  </div>
 </template>
 
 <script>
@@ -40,31 +42,35 @@ export default {
 }
 </script>
 
-<style scoped>
-  /deep/ #app, .out-container {
-    background-color: #fdfbf6;
-  }
+<style lang="scss">
+  .TenantCenterDiv {
+    width: 100%;
+    height: 100%;
+    #app, .out-container {
+      background-color: #fdfbf6;
+    }
 
-  .in-container {
-    margin: 10px 4%;
-    border-radius: 5px;
-  }
+    .in-container {
+      margin: 10px 4%;
+      border-radius: 5px;
+    }
 
-  /deep/ .el-header {
-    padding: 0;
-  }
+    .el-header {
+      padding: 0;
+    }
 
-  /deep/ .el-main {
-    padding: 0;
-    margin-left: 10px;
-  }
+    .el-main {
+      padding: 0;
+      margin-left: 10px;
+    }
 
-  /deep/ .el-card__header {
-    padding: 20px 30px;
-    color: #efac27;
-  }
+    .el-card__header {
+      padding: 20px 30px;
+      color: #efac27;
+    }
 
-  /deep/ .el-card__body {
-    padding: 20px 40px 40px 30px;
+    .el-card__body {
+      padding: 20px 40px 40px 30px;
+    }
   }
 </style>

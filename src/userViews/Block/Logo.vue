@@ -1,5 +1,5 @@
 <template>
-  <img src="../assets/imgs/logo2.png" class="logo" @click="toHome">
+  <img src="../../assets/imgs/logo2.png" class="logo" @click="toHome">
 </template>
 
 <script>

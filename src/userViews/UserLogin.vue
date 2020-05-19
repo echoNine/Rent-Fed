@@ -1,38 +1,40 @@
 <template>
-  <div class="login-container">
-    <div class="login-box" v-show="isLogin">
-      <h2 class="title">欢迎登录</h2>
-      <el-form :model="LoginForm" :rules="LoginFormRules" ref="LoginFormRef" class="login-form">
-        <el-form-item prop="email">
-          <el-input v-model="LoginForm.email" prefix-icon="el-icon-user" clearable></el-input>
-        </el-form-item>
-        <el-form-item prop="pwd">
-          <el-input v-model="LoginForm.pwd" type="password" prefix-icon="el-icon-lock" clearable></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button class="btns" type="warning" @click="login">登录</el-button>
-          <el-button class="btns" type="info" @click="toRegister">去注册</el-button>
-        </el-form-item>
-      </el-form>
-    </div>
-    <div class="register-box"  v-show="!isLogin">
-      <h2 class="title">欢迎注册</h2>
-      <el-form :model="RegisterForm" :rules="RegisterFormRules" ref="RegisterFormRef" class="register-form">
-        <el-form-item prop="email">
-          <el-input v-model="RegisterForm.email" prefix-icon="el-icon-user" clearable></el-input>
-        </el-form-item>
-        <el-form-item prop="pwd">
-          <el-input v-model="RegisterForm.pwd" type="password" prefix-icon="el-icon-lock" clearable></el-input>
-        </el-form-item>
-        <el-form-item prop="code">
-          <el-input v-model="RegisterForm.code" style="width: 70%; float: left" placeholder="验证码" clearable></el-input>
-          <el-button style="width: 25%; padding: 11px; float: right" type="warning" @click="send">获取验证码</el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-button class="btns" type="warning" @click="register">注册</el-button>
-          <el-button class="btns" type="info" @click="toLogin">去登录</el-button>
-        </el-form-item>
-      </el-form>
+  <div class="UserLoginDiv">
+    <div class="login-container">
+      <div class="login-box" v-show="isLogin">
+        <h2 class="title">欢迎登录</h2>
+        <el-form :model="LoginForm" :rules="LoginFormRules" ref="LoginFormRef" class="login-form">
+          <el-form-item prop="email">
+            <el-input v-model="LoginForm.email" prefix-icon="el-icon-user" clearable></el-input>
+          </el-form-item>
+          <el-form-item prop="pwd">
+            <el-input v-model="LoginForm.pwd" type="password" prefix-icon="el-icon-lock" clearable></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button class="btns" type="warning" @click="login">登录</el-button>
+            <el-button class="btns" type="info" @click="toRegister">去注册</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+      <div class="register-box"  v-show="!isLogin">
+        <h2 class="title">欢迎注册</h2>
+        <el-form :model="RegisterForm" :rules="RegisterFormRules" ref="RegisterFormRef" class="register-form">
+          <el-form-item prop="email">
+            <el-input v-model="RegisterForm.email" prefix-icon="el-icon-user" clearable></el-input>
+          </el-form-item>
+          <el-form-item prop="pwd">
+            <el-input v-model="RegisterForm.pwd" type="password" prefix-icon="el-icon-lock" clearable></el-input>
+          </el-form-item>
+          <el-form-item prop="code">
+            <el-input v-model="RegisterForm.code" style="width: 70%; float: left" placeholder="验证码" clearable></el-input>
+            <el-button style="width: 25%; padding: 11px; float: right" type="warning" @click="send">获取验证码</el-button>
+          </el-form-item>
+          <el-form-item>
+            <el-button class="btns" type="warning" @click="register">注册</el-button>
+            <el-button class="btns" type="info" @click="toLogin">去登录</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
     </div>
   </div>
 </template>
@@ -45,7 +47,7 @@ export default {
     return {
       isLogin: true,
       LoginForm: {
-        email: '',
+        email: '2507388395@qq.com',
         pwd: ''
       },
       RegisterForm: {
@@ -95,7 +97,7 @@ export default {
     login () {
       this.$refs.LoginFormRef.validate(valid => {
         if (valid) {
-          this.$ajax.post('/user/login', {
+          this.$ajax.post('/frontend/user/login', {
             email: this.LoginForm.email,
             pwd: this.LoginForm.pwd
           }).then(res => {
@@ -120,17 +122,16 @@ export default {
     register () {
       this.$refs.RegisterFormRef.validate(valid => {
         if (valid) {
-          this.$ajax.post('/user/register', {
+          this.$ajax.post('/frontend/user/register', {
             email: this.RegisterForm.email,
             pwd: this.RegisterForm.pwd,
-            code: this.RegisterForm.code,
-            nowTime: this.$moment(new Date()).format('YYYY-MM-DD')
+            code: this.RegisterForm.code
           }).then(res => {
             if (res.data.success) {
               this.$message.success({
                 message: '恭喜您，注册成功！请登录'
               })
-              this.reload()
+              this.isLogin = true
             } else {
               this.$message.error({
                 message: res.data.msg
@@ -146,7 +147,7 @@ export default {
     send () {
       this.$refs.RegisterFormRef.validate((valid) => {
         if (valid) {
-          this.$ajax.post('/user/send', {
+          this.$ajax.post('/frontend/user/send', {
             email: this.RegisterForm.email,
             pwd: this.RegisterForm.pwd
           }).then(res => {
@@ -170,50 +171,55 @@ export default {
 }
 </script>
 
-<style scoped>
-  .login-container {
-    min-height: 100%;
+<style lang="scss">
+  .UserLoginDiv {
     width: 100%;
-    background: url(../assets/imgs/userBg.jpg) center center no-repeat;
-    overflow: hidden;
-    text-align: center;
-  }
+    height: 100%;
+    .login-container {
+      min-height: 100%;
+      width: 100%;
+      background: url(../assets/imgs/userBg.jpg) center center no-repeat;
+      background-size: cover;
+      overflow: hidden;
+      text-align: center;
+    }
 
-  .login-box, .register-box {
-    width: 500px;
-    position: absolute;
-    left: 50%;
-    top: 48%;
-    transform: translate(-50%, -50%);
-    background-color: #fbfbfb;
-    border: 1px solid #bab7b3;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
-    border-radius: 5px;
-    opacity: 0.9;
-  }
+    .login-box, .register-box {
+      width: 500px;
+      position: absolute;
+      left: 50%;
+      top: 48%;
+      transform: translate(-50%, -50%);
+      background-color: #fbfbfb;
+      border: 1px solid #bab7b3;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
+      border-radius: 5px;
+      opacity: 0.9;
+    }
 
-  .login-box {
-    height: 320px;
-  }
+    .login-box {
+      height: 320px;
+    }
 
-  .register-box {
-    height: 380px;
-  }
+    .register-box {
+      height: 380px;
+    }
 
-  .title {
-    margin-top: 35px;
-    color: #5d6b7b;
-  }
+    .title {
+      margin-top: 35px;
+      color: #5d6b7b;
+    }
 
-  .login-form, .register-form {
-    position: absolute;
-    bottom: 25px;
-    width: 100%;
-    padding: 0 40px;
-    box-sizing: border-box;
-  }
+    .login-form, .register-form {
+      position: absolute;
+      bottom: 25px;
+      width: 100%;
+      padding: 0 40px;
+      box-sizing: border-box;
+    }
 
-  .btns {
-    margin: 0 30px;
+    .btns {
+      margin: 0 30px;
+    }
   }
 </style>
